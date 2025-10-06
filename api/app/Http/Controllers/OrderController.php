@@ -189,7 +189,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:pending,confirmed,preparing,ready,completed,cancelled',
+            'status' => 'required|in:pending,accepted,cooking,ready,completed,canceled',
         ]);
 
         if ($validator->fails()) {
@@ -206,12 +206,9 @@ class OrderController extends Controller
             'success' => true,
             'message' => 'Order status updated successfully',
             'data' => [
-                'order' => [
-                    'id' => $order->id,
-                    'order_number' => $order->order_number,
-                    'status' => $order->status,
-                    'updated_at' => $order->updated_at->format('Y-m-d H:i:s'),
-                ],
+                'id' => $order->id,
+                'status' => $order->status,
+                'updated_at' => $order->updated_at->format('Y-m-d H:i:s'),
             ],
         ]);
     }

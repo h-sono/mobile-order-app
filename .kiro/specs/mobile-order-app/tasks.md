@@ -374,7 +374,8 @@ Output:
 - If any step fails, stop and keep logs/diff.
 ---
 
-## Phase 4：ステータス表示＆店側画面（Week7–8）
+## Phase 4：ステータス表示＆店側画面（概要）
+---
 - **[API]**  
   - `GET /orders/{id}` 実装（注文詳細・ステータス返却）  
   - `PATCH /orders/{id}/status` 実装（店側用、APIキー認証）  
@@ -382,8 +383,136 @@ Output:
   - Laravel Blade または簡易Vue/Reactで管理画面を作成  
   - 当日注文一覧、状態変更（受付 → 調理中 → 受け取り待ち → 完了）  
   - 売切れ切替・スロット超過の警告表示  
-
 ---
+
+## Phase 4：ステータス表示＆店側画面（詳細）
+### T-11 API：GET /api/orders/{id}
+---
+Spec: mobile-order-app
+Task: T-11 API: GET /api/orders/{id}
+Branch: feature/kiro-t11-order-show
+
+Please implement T-11 as defined in tasks.md.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- add GET /api/orders/{id} -> OrderController@show
+- return order (by UUID) with slot info as JSON (id, slot{...}, items[], totalPrice, status, createdAt)
+
+Verify:
+- run: cd api && php artisan route:list | grep api/orders
+- run: curl http://localhost:8000/api/orders/<uuid>
+
+Output:
+- commit to branch feature/kiro-t11-order-show
+- PR title: "T-11: GET /api/orders/{id} returns order detail"
+---
+
+### T-12 API：PATCH /api/orders/{id}/status （API Key 認証）
+---
+Spec: mobile-order-app
+Task: T-12 API: PATCH /api/orders/{id}/status (API key)
+Branch: feature/kiro-t12-order-status
+
+Please implement T-12 exactly as defined.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- create ApiKeyMiddleware reading ADMIN_API_KEY; check X-API-KEY
+- add PATCH /api/orders/{id}/status (middleware: apikey) -> OrderStatusController@update
+- validate status in ["pending","accepted","cooking","ready","completed","canceled"]
+- update and return { id, status, updatedAt }
+
+Verify:
+- run: curl -X PATCH http://localhost:8000/api/orders/<uuid>/status -H "X-API-KEY: <key>" -H "Content-Type: application/json" -d '{"status":"cooking"}'
+
+Output:
+- commit to feature/kiro-t12-order-status
+- PR title: "T-12: PATCH /api/orders/{id}/status with API key"
+---
+
+### T-13 API：GET /api/admin/orders?date=YYYY-MM-DD（当日一覧）
+---
+Spec: mobile-order-app
+Task: T-13 API: GET /api/admin/orders?date=YYYY-MM-DD
+Branch: feature/kiro-t13-admin-orders-list
+
+Please implement T-13.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- add GET /api/admin/orders (middleware: apikey) -> AdminOrderController@index
+- return list for given date (default today) with slot info and meta
+
+Verify:
+- run: curl -H "X-API-KEY: <key>" "http://localhost:8000/api/admin/orders?date=2025-10-06"
+
+Output:
+- commit to feature/kiro-t13-admin-orders-list
+- PR title: "T-13: admin orders list API (by date)"
+---
+
+### T-14 Web/Admin（Blade）：当日一覧＋状態変更UI
+---
+Spec: mobile-order-app
+Task: T-14 Web/Admin: Orders dashboard (Blade)
+Branch: feature/kiro-t14-admin-blade
+
+Please implement T-14.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- add GET /admin/orders -> Admin\OrderAdminController@index
+- render Blade view with a table shell
+- add frontend JS to fetch /api/admin/orders?date=... (X-API-KEY) and render rows
+- add buttons to update status via PATCH /api/orders/{id}/status
+- show warning if slot.reserved > slot.capacity
+
+Verify:
+- open http://localhost:8000/admin/orders
+
+Output:
+- commit to feature/kiro-t14-admin-blade
+- PR title: "T-14: admin orders dashboard (Blade + API integration)"
+---
+
+### T-15 API：メニュー売切れ切替（Optional だが UI 要件に合致）
+---
+Spec: mobile-order-app
+Task: T-15 API: toggle menu availability
+Branch: feature/kiro-t15-menu-availability
+
+Please implement T-15.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- add PATCH /api/admin/menu/{id}/availability (middleware: apikey)
+- body: { isAvailable: boolean } -> update menus.is_available
+- return { id, isAvailable }
+
+Verify:
+- run: curl -X PATCH -H "X-API-KEY: <key>" -H "Content-Type: application/json" -d '{"isAvailable":false}' http://localhost:8000/api/admin/menu/1/availability
+
+Output:
+- commit to feature/kiro-t15-menu-availability
+- PR title: "T-15: toggle menu availability (sold-out)"
+---
+
 
 ## Phase 5：磨き込み
 - **[App]**  

@@ -2,6 +2,27 @@
 - 1日目にSPECSに必要ファイルを作成。
 - 2日目にtasks.mdのフェーズ1を全て実行。アプリのスケルトンが完成。この時点で約20credit消費。
 
+# Kiro依頼文のテンプレート（英語推奨）
+```md
+Spec: <spec名>
+Task: <T-XX タスク名>
+Branch: feature/kiro-txx-<short-description>
+
+Please implement T-XX as defined in tasks.md.
+
+Scope:
+- workspace_root: .
+- target: <api/ or app/>
+- files: <必要なら列挙>
+
+Verify:
+- run: <検証コマンド>
+
+Output:
+- commit to <branch>
+- PR title: "<T-XX: 短い説明>"
+```
+
 # specs/tasks.mdに関して
 ## Phase2実行結果：約8クレジット消費（合計約28クレジット）
 ```md
@@ -49,7 +70,7 @@ Phase 2が正常に完了しました。メニューの表示とカート機能�
 
 - Phase2はCRUDのR部分で非常に単純なためそこまで詳細は不要。
 
-## Phase3について
+## Phase3について：約22クレジット消費（合計約50クレジット）
 - 以下のような依頼文だと失敗する可能性あり。
 
 ```md
@@ -288,4 +309,213 @@ UUID注文番号: 推測困難な一意識別子
 データ検証: サーバーサイドでの完全なバリデーション
 状態クリア: 注文完了後のカート・選択状態クリア
 T-10タスクは正常に完了しました。ユーザーが注文を作成し、QRコードで受け取り確認ができる完全なシステムが実装されています！
+```
+
+## Phase4について：約 クレジット消費（合計約 クレジット）
+### T-11の結果：実装済みだった。
+### T-12の結果
+```md
+T-12 完了報告
+✅ 目的達成: PATCH /api/orders/{id}/status エンドポイントにAPI Key認証が正常に実装されました。
+
+実施内容の確認:
+✅ ApiKeyMiddleware作成: X-API-KEYヘッダーによる認証機能
+✅ 環境変数設定: ADMIN_API_KEY=admin-secret-key-2025
+✅ ミドルウェア登録: bootstrap/app.phpでapikeyエイリアス登録
+✅ ルート保護: /orders/{order}/statusにapikey ミドルウェア適用
+✅ ステータス値更新: T-12要件に合わせたenum値に変更
+旧: pending,confirmed,preparing,ready,completed,cancelled
+新: pending,accepted,cooking,ready,completed,canceled
+✅ マイグレーション実行: データベーススキーマ更新完了
+✅ レスポンス形式: T-12要件通りの簡潔なレスポンス
+新しい機能:
+API Key認証:
+X-API-KEY ヘッダーでの認証
+環境変数からの管理者キー読み込み
+未認証時の適切なエラーレスポンス
+ステータス管理:
+店舗運用に適したステータス値
+バリデーション機能
+更新時刻の記録
+API仕様:
+# 正常なリクエスト例
+curl -X PATCH http://localhost:8000/api/orders/<uuid>/status \
+  -H "X-API-KEY: admin-secret-key-2025" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"cooking"}'
+
+# レスポンス例
+{
+  "success": true,
+  "message": "Order status updated successfully",
+  "data": {
+    "id": 1,
+    "status": "cooking",
+    "updated_at": "2025-10-06 15:30:00"
+  }
+}
+セキュリティ機能:
+認証必須: API Key なしではアクセス不可
+環境変数管理: 秘密鍵の安全な管理
+エラーハンドリング: 認証失敗時の適切なレスポンス
+ステータス遷移:
+pending → accepted → cooking → ready → completed
+canceled (任意の段階から)
+T-12タスクは正常に完了しました。店舗スタッフがAPI Keyを使用して注文ステータスを安全に更新できるシステムが実装されています！
+```
+
+### T-13の結果
+```md
+T-13 完了報告
+✅ 目的達成: GET /api/admin/orders?date=YYYY-MM-DD エンドポイントが正常に実装されました。
+
+実施内容の確認:
+✅ AdminOrderController作成: 管理者用注文一覧機能
+✅ API Key認証: apikeyミドルウェアによる保護
+✅ 日付フィルタリング: クエリパラメータでの日付指定（デフォルト：今日）
+✅ ルート追加: GET /api/admin/orders
+✅ テストデータ作成: OrderSeederでサンプル注文データ生成
+✅ 統計情報: 注文数、売上、ステータス別集計
+✅ 詳細情報: 注文詳細、スロット情報、アイテム一覧を含む
+新しい機能:
+日付別注文一覧:
+デフォルト：今日の注文
+?date=YYYY-MM-DDで特定日の注文取得
+日付形式バリデーション
+統計ダッシュボード:
+総注文数、総売上
+ステータス別注文数
+詳細な注文情報:
+顧客情報、注文アイテム
+スロット情報、特別指示
+作成・更新日時
+API仕様:
+# 今日の注文一覧
+curl -H "X-API-KEY: admin-secret-key-2025" \
+  "http://localhost:8000/api/admin/orders"
+
+# 特定日の注文一覧
+curl -H "X-API-KEY: admin-secret-key-2025" \
+  "http://localhost:8000/api/admin/orders?date=2025-10-06"
+レスポンス構造:
+{
+  "success": true,
+  "data": {
+    "date": "2025-10-06",
+    "stats": {
+      "total_orders": 5,
+      "total_revenue": "156.78",
+      "status_counts": {
+        "pending": 1,
+        "accepted": 1,
+        "cooking": 1,
+        "ready": 1,
+        "completed": 1,
+        "canceled": 0
+      }
+    },
+    "orders": [
+      {
+        "id": 1,
+        "order_number": "uuid-string",
+        "status": "cooking",
+        "customer_name": "John Doe",
+        "customer_email": "john@example.com",
+        "customer_phone": "123-456-7890",
+        "total": "31.30",
+        "pickup_time": "2025-10-06 09:00:00",
+        "special_instructions": "Extra sauce please",
+        "slot": {
+          "id": 1,
+          "date": "2025-10-06",
+          "time_slot": "09:00 - 09:30"
+        },
+        "items_count": 2,
+        "items": [
+          {
+            "menu_item_id": 1,
+            "name": "Classic Burger",
+            "quantity": 2,
+            "unit_price": "12.99",
+            "total_price": "25.98"
+          }
+        ],
+        "created_at": "2025-10-06 08:30:00",
+        "updated_at": "2025-10-06 08:30:00"
+      }
+    ]
+  }
+}
+セキュリティ機能:
+API Key認証: 管理者のみアクセス可能
+入力検証: 日付形式の厳密なバリデーション
+エラーハンドリング: 不正な日付形式の適切な処理
+管理機能:
+注文管理: 日付別の注文一覧表示
+統計表示: リアルタイムの売上・注文状況
+詳細確認: 各注文の完全な情報表示
+ステータス把握: 注文処理状況の一覧表示
+T-13タスクは正常に完了しました。店舗管理者がAPI Keyを使用して日付別の注文一覧と統計情報を安全に取得できるシステムが実装されています！
+```
+
+### T-14の結果
+```md
+T-14 完了報告
+✅ 目的達成: Web/Admin注文ダッシュボード（Blade）が正常に実装されました。
+
+実施内容の確認:
+✅ Admin\OrderAdminController作成: Bladeビューを返すWebコントローラー
+✅ Webルート追加: GET /admin/orders
+✅ Bladeビュー作成: 完全な管理者ダッシュボードUI
+✅ JavaScript統合: API呼び出しとリアルタイム更新
+✅ ステータス管理: ワンクリックでの注文ステータス更新
+✅ 統計表示: 売上、注文数、ステータス別集計
+✅ レスポンシブデザイン: モダンなUIデザイン
+新しい機能:
+管理者ダッシュボード:
+日付選択による注文フィルタリング
+リアルタイムデータ更新
+統計情報の視覚的表示
+注文管理UI:
+注文一覧テーブル表示
+顧客情報、アイテム詳細表示
+特別指示の表示
+ステータス更新:
+ワンクリックでのステータス変更
+ワークフロー対応のアクションボタン
+即座のUI更新
+UI機能:
+統計カード:
+総注文数、総売上
+ステータス別注文数
+注文テーブル:
+注文番号、顧客情報
+受取時間、アイテム詳細
+現在のステータス
+アクションボタン:
+ステータス別の適切なアクション
+視覚的なフィードバック
+ワークフロー:
+Pending → Accept/Cancel
+Accepted → Start Cooking/Cancel
+Cooking → Mark Ready
+Ready → Complete
+Completed/Canceled → 最終状態
+技術仕様:
+フロントエンド: Vanilla JavaScript + CSS
+バックエンド: Laravel Blade + API統合
+認証: X-API-KEY ヘッダー自動付与
+リアルタイム: Fetch API による非同期通信
+エラーハンドリング: ネットワークエラー、API エラーの適切な処理
+アクセス方法:
+http://localhost:8000/admin/orders
+セキュリティ:
+API Key認証: 自動的にX-API-KEYヘッダーを付与
+CSRF保護: Laravel標準のCSRF対策
+入力検証: 日付形式の検証
+レスポンシブ対応:
+グリッドレイアウト: 統計カードの自動調整
+テーブル表示: 横スクロール対応
+ボタン配置: モバイルフレンドリーなアクション
+T-14タスクは正常に完了しました。店舗スタッフが直感的に注文を管理し、ステータスを更新できる完全なWebダッシュボードが実装されています！
 ```

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\AdminMenuController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -18,4 +20,9 @@ Route::get('/slots/{slot}', [SlotController::class, 'show']);
 
 Route::post('/orders', [OrderController::class, 'store']);
 Route::get('/orders/{order}', [OrderController::class, 'show']);
-Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus']);
+Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->middleware('apikey');
+
+// Admin routes (require API key)
+Route::get('/admin/orders', [AdminOrderController::class, 'index'])->middleware('apikey');
+Route::get('/admin/menu', [AdminMenuController::class, 'index'])->middleware('apikey');
+Route::patch('/admin/menu/{menuItem}/availability', [AdminMenuController::class, 'updateAvailability'])->middleware('apikey');
