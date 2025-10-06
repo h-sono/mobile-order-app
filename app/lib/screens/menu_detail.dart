@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/app_scaffold.dart';
 
 class MenuDetailScreen extends StatelessWidget {
   final String menuId;
@@ -7,11 +8,9 @@ class MenuDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Menu Detail'),
-      ),
-      body: Center(
+    return AppScaffold(
+      title: 'Menu Detail',
+      child: Center(
         child: Text('Menu Detail Screen - ID: $menuId'),
       ),
     );

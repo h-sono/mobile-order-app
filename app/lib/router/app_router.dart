@@ -6,6 +6,7 @@ import '../screens/cart.dart';
 import '../screens/slot_selection.dart';
 import '../screens/order_confirmation.dart';
 import '../screens/order_complete.dart';
+import '../screens/help.dart';
 
 final appRouter = GoRouter(
   debugLogDiagnostics: true,
@@ -40,6 +41,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/order-complete',
       builder: (context, state) => const OrderCompleteScreen(),
+    ),
+    GoRoute(
+      path: '/help',
+      builder: (context, state) => const HelpScreen(),
     ),
   ],
 );

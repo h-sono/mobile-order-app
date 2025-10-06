@@ -1,6 +1,6 @@
 # Tasks Document
 
-## Phase 1：スケルトン（Week1–2）
+## Phase 1：スケルトン
 
 ## T-01 Flutter: プロジェクト生成
 - deps: []
@@ -180,7 +180,7 @@ Output:
 - T-04 → T-05（APIの骨）
 - T-06（接続確認）
 
-## Phase 2：メニュー＆カート（Week3–4）
+## Phase 2：メニュー＆カート
 - **[App]**  
   - `GET /menu` からのデータ取得 → メニュー一覧/詳細UI実装  
   - Riverpodによるカート状態管理（追加・削除・合計）  
@@ -513,8 +513,8 @@ Output:
 - PR title: "T-15: toggle menu availability (sold-out)"
 ---
 
-
-## Phase 5：磨き込み
+## Phase 5：磨き込み（概要）
+---
 - **[App]**  
   - i18n対応（intl：日本語/英語切替）  
   - アクセシビリティ改善（スクリーンリーダー対応、コントラスト）  
@@ -524,8 +524,9 @@ Output:
   - MySQL移行（RDS想定）  
   - Redis導入検討（キャッシュ・セッション）  
   - GitHub Actions → EC2へデプロイ（SSH or CI/CD）  
-
 ---
+
+## Phase 5：磨き込み（詳細）
 
 ## Phase 6：テスト＆リリース準備
 - **[Testing]**  

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/cart_provider.dart';
+import '../widgets/app_scaffold.dart';
 
 class CartScreen extends ConsumerWidget {
   const CartScreen({super.key});
@@ -10,20 +11,18 @@ class CartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cartState = ref.watch(cartProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cart'),
-        actions: [
-          if (cartState.items.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear_all),
-              onPressed: () {
-                ref.read(cartProvider.notifier).clearCart();
-              },
-            ),
-        ],
-      ),
-      body: cartState.items.isEmpty
+    return AppScaffold(
+      title: 'Cart',
+      actions: [
+        if (cartState.items.isNotEmpty)
+          IconButton(
+            icon: const Icon(Icons.clear_all),
+            onPressed: () {
+              ref.read(cartProvider.notifier).clearCart();
+            },
+          ),
+      ],
+      child: cartState.items.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

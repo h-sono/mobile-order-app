@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../providers/order_provider.dart';
+import '../widgets/app_scaffold.dart';
 
 class OrderCompleteScreen extends ConsumerWidget {
   const OrderCompleteScreen({super.key});
@@ -11,21 +12,19 @@ class OrderCompleteScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final orderState = ref.watch(orderProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Order Complete'),
-        automaticallyImplyLeading: false, // Remove back button
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home),
-            onPressed: () {
-              ref.read(orderProvider.notifier).clearOrder();
-              context.go('/');
-            },
-          ),
-        ],
-      ),
-      body: orderState.currentOrder == null
+    return AppScaffold(
+      title: 'Order Complete',
+      showHomeAction: false, // We have custom home action
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            ref.read(orderProvider.notifier).clearOrder();
+            context.go('/');
+          },
+        ),
+      ],
+      child: orderState.currentOrder == null
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

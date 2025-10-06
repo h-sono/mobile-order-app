@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/slot_provider.dart';
 import '../models/slot.dart';
+import '../widgets/app_scaffold.dart';
 
 class SlotSelectionScreen extends ConsumerStatefulWidget {
   const SlotSelectionScreen({super.key});
@@ -28,19 +29,16 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
   Widget build(BuildContext context) {
     final slotState = ref.watch(slotProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Select Pickup Time'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              ref.read(slotProvider.notifier).loadSlots(date: selectedDate);
-            },
-          ),
-        ],
-      ),
-      body: _buildBody(slotState),
+    return AppScaffold(
+      title: 'Select Pickup Time',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: () {
+            ref.read(slotProvider.notifier).loadSlots(date: selectedDate);
+          },
+        ),
+      ],
       bottomNavigationBar: slotState.selectedSlot != null
           ? Container(
               padding: const EdgeInsets.all(16.0),
@@ -103,6 +101,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
               ),
             )
           : null,
+      child: _buildBody(slotState),
     );
   }
 

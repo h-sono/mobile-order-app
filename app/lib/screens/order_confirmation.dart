@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/cart_provider.dart';
 import '../providers/slot_provider.dart';
 import '../providers/order_provider.dart';
+import '../widgets/app_scaffold.dart';
 
 class OrderConfirmationScreen extends ConsumerStatefulWidget {
   const OrderConfirmationScreen({super.key});
@@ -35,9 +36,9 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
     final orderState = ref.watch(orderProvider);
 
     if (cartState.items.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Order Confirmation')),
-        body: const Center(
+      return AppScaffold(
+        title: 'Order Confirmation',
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -51,9 +52,9 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
     }
 
     if (slotState.selectedSlot == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Order Confirmation')),
-        body: const Center(
+      return AppScaffold(
+        title: 'Order Confirmation',
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -66,11 +67,9 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Order Confirmation'),
-      ),
-      body: orderState.isLoading
+    return AppScaffold(
+      title: 'Order Confirmation',
+      child: orderState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
