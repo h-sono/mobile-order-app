@@ -43,6 +43,9 @@ dependencies:
   
   # HTTP client
   http: ^1.2.2
+  
+  # QR Code generation
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

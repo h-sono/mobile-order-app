@@ -3,6 +3,8 @@ import '../screens/home.dart';
 import '../screens/menu_list.dart';
 import '../screens/menu_detail.dart';
 import '../screens/cart.dart';
+import '../screens/slot_selection.dart';
+import '../screens/order_confirmation.dart';
 import '../screens/order_complete.dart';
 
 final appRouter = GoRouter(
@@ -26,6 +28,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/cart',
       builder: (context, state) => const CartScreen(),
+    ),
+    GoRoute(
+      path: '/slot-selection',
+      builder: (context, state) => const SlotSelectionScreen(),
+    ),
+    GoRoute(
+      path: '/order-confirmation',
+      builder: (context, state) => const OrderConfirmationScreen(),
     ),
     GoRoute(
       path: '/order-complete',

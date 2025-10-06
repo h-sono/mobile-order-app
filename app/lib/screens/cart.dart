@@ -170,14 +170,14 @@ class CartScreen extends ConsumerWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            // Navigate to checkout or order completion
-                            context.go('/order-complete');
+                            // Navigate to slot selection
+                            context.go('/slot-selection');
                           },
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: const Text(
-                            'Proceed to Checkout',
+                            'Select Pickup Time',
                             style: TextStyle(fontSize: 16),
                           ),
                         ),

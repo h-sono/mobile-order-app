@@ -30,6 +30,13 @@ class HomeScreen extends StatelessWidget {
               },
               child: const Text('View Cart'),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                context.go('/slot-selection');
+              },
+              child: const Text('Select Pickup Time'),
+            ),
           ],
         ),
       ),

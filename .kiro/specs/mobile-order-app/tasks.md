@@ -189,9 +189,8 @@ Output:
   - メニューSeederでダミーデータ投入  
   - キャッシュ（FileCache）導入、CDN利用想定の設計  
 
+## Phase 3：スロット＆注文（概要）
 ---
-
-## Phase 3：スロット＆注文（Week5–6）
 - **[API]**  
   - `GET /slots` 実装（受取枠データをDBに保持）  
   - `POST /orders` 実装（在庫引当、バリデーション、注文保存）  
@@ -200,7 +199,179 @@ Output:
   - 受取時刻スロット選択UI  
   - 注文確定処理 → `POST /orders` 呼び出し  
   - 注文番号とQRコード表示（`qr_flutter` 利用）  
+---
 
+## Phase 3：スロット＆注文（詳細）
+### T-07 api：受け取り枠（GET /api/slots）
+---
+Spec: mobile-order-app
+Task: T-07 API: GET /api/slots
+Branch: feature/kiro-t07-slots
+
+Please implement T-07 as defined in tasks.md.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- create migration: api/database/migrations/***_create_slots_table.php
+  columns:
+    - id (big increments)
+    - date (date)
+    - time (string, e.g. "10:00")
+    - capacity (unsignedInteger)
+    - reserved (unsignedInteger, default 0)
+    - is_active (boolean, default true)
+    - timestamps
+- create model: api/app/Models/Slot.php (fillable: date, time, capacity, reserved, is_active)
+- seeder: api/database/seeders/SlotSeeder.php
+  - generate today ~ +6 days, for each day create sample slots (e.g. 10:00-18:00 / 60min step, capacity 5)
+- controller: api/app/Http/Controllers/SlotController.php
+  - index(): GET /api/slots?date=YYYY-MM-DD -> return slots of that date as:
+    { "data":[ { "id":1,"date":"2025-10-06","time":"10:00","capacity":5,"reserved":1,"isActive":true } ] }
+- route: api/routes/api.php
+  Route::get('/slots', [\App\Http\Controllers\SlotController::class, 'index']);
+- enable date filter; default to today if query not provided.
+
+Verify:
+- run: cd api && php artisan migrate:fresh --seed
+- run: cd api && php artisan route:list | grep api/slots
+- run: curl "http://localhost:8000/api/slots?date=2025-10-06"
+
+Output:
+- commit to branch feature/kiro-t07-slots
+- PR title: "T-07: add GET /api/slots with seeder"
+- If any step fails, stop and keep logs.
+
+---
+
+## T-08 api：注文（POST /api/orders）
+---
+Spec: mobile-order-app
+Task: T-08 API: POST /api/orders (UUID)
+Branch: feature/kiro-t08-orders
+
+Please implement T-08 exactly as defined.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- migration: api/database/migrations/***_create_orders_table.php
+  columns:
+    - id (uuid, primary)
+    - slot_id (foreignId -> slots.id, cascadeOnDelete)
+    - total_price (unsignedInteger)
+    - items (json)  // [{menuId, name?, price, qty}]
+    - status (string, default "pending")
+    - timestamps
+- model: api/app/Models/Order.php (casts: items->array; keyType uuid; incrementing=false)
+- controller: api/app/Http/Controllers/OrderController.php
+  POST /api/orders:
+    - validate:
+      slotId: required|exists:slots,id
+      totalPrice: required|integer|min:0
+      items: required|array|min:1
+      items.*.menuId: required|integer
+      items.*.qty: required|integer|min:1
+      items.*.price: required|integer|min:0
+    - within DB transaction:
+      - fetch slot for update (pessimistic lock if available)
+      - check slot.is_active and (slot.reserved < slot.capacity)
+      - slot.reserved += 1; save
+      - create order with id = (string) \Illuminate\Support\Str::uuid()
+    - return 201:
+      { "orderId":"uuid-string", "slotId":X, "status":"pending" }
+- route: api/routes/api.php
+  Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store']);
+- (Optional) add simple Feature Test for 201 and capacity check.
+
+Verify:
+- run: cd api && php artisan migrate
+- run: curl -X POST http://localhost:8000/api/orders \
+   -H "Content-Type: application/json" \
+   -d '{ "slotId": 1, "items":[{"menuId":1,"qty":2,"price":450}], "totalPrice":900 }'
+
+Output:
+- commit to branch feature/kiro-t08-orders
+- PR title: "T-08: implement POST /api/orders with UUID and slot reservation"
+- If any step fails, stop and keep logs.
+---
+
+## T-09 app：スロット選択UI
+---
+Spec: mobile-order-app
+Task: T-09 App: Slot selection UI
+Branch: feature/kiro-t09-slot-ui
+
+Please implement T-09.
+
+Scope:
+- workspace_root: .
+- target (create/update only under app/):
+  - app/lib/models/slot.dart
+  - app/lib/services/api_service.dart (add fetchSlots(date))
+  - app/lib/providers/slot_provider.dart
+  - app/lib/screens/slot_select.dart
+  - app/lib/router/app_router.dart (add /slots route)
+
+Details:
+- slot.dart:
+  class Slot { int id; String date; String time; int capacity; int reserved; bool isActive; ... fromJson }
+- api_service.dart:
+  Future<List<Slot>> fetchSlots(String date) => GET {API_BASE_URL}/api/slots?date=YYYY-MM-DD
+- provider:
+  FutureProvider.family<List<Slot>, String>(...)  // keyed by date
+- screen:
+  simple UI: date picker (today default), list of slots with (capacity - reserved) 表示、選択可能
+  when selected, save selection in a provider (e.g., selectedSlotProvider) and navigate to /order-confirm
+
+Verify:
+- run: cd app && flutter analyze
+
+Output:
+- commit to feature/kiro-t09-slot-ui
+- PR title: "T-09: slot selection screen wired to GET /api/slots"
+---
+
+## T-10 app：注文POST＆QR表示
+---
+Spec: mobile-order-app
+Task: T-10 App: Order POST & QR
+Branch: feature/kiro-t10-order-qr
+
+Please implement T-10.
+
+Scope:
+- workspace_root: .
+- target (create/update only under app/):
+  - app/pubspec.yaml (add qr_flutter:^4)
+  - app/lib/models/order_request.dart
+  - app/lib/services/api_service.dart (add postOrder)
+  - app/lib/providers/order_provider.dart
+  - app/lib/screens/order_confirm.dart
+  - app/lib/screens/order_complete.dart
+  - app/lib/router/app_router.dart (add /order-confirm, /order-complete)
+
+Details:
+- order_request.dart:
+  class OrderRequest { int slotId; List<OrderItem>{menuId, qty, price}; int totalPrice; toJson(); }
+- api_service.postOrder(req) => POST {API_BASE_URL}/api/orders; returns {orderId, slotId, status}
+- order_confirm.dart:
+  show selected slot + cart summary + total; "Place Order" button -> call postOrder -> on success push /order-complete with orderId
+- order_complete.dart:
+  read orderId; show Text(orderId) and QrImage(data: orderId)
+- wire providers to existing cart/menu providers
+
+Verify:
+- run: cd app && flutter pub get && flutter analyze
+
+Output:
+- commit to feature/kiro-t10-order-qr
+- PR title: "T-10: POST /api/orders integration and QR code display"
+- If any step fails, stop and keep logs/diff.
 ---
 
 ## Phase 4：ステータス表示＆店側画面（Week7–8）
@@ -214,7 +385,7 @@ Output:
 
 ---
 
-## Phase 5：磨き込み（Week9–10）
+## Phase 5：磨き込み
 - **[App]**  
   - i18n対応（intl：日本語/英語切替）  
   - アクセシビリティ改善（スクリーンリーダー対応、コントラスト）  
@@ -227,7 +398,7 @@ Output:
 
 ---
 
-## Phase 6：テスト＆リリース準備（Week11–12）
+## Phase 6：テスト＆リリース準備
 - **[Testing]**  
   - E2Eシナリオ（Flutter integration test + Laravel Feature Test）  
   - 負荷試験（並行注文：軽めのシナリオをArtillery/JMeterで）  
