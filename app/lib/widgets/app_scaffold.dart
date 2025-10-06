@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
+import 'language_toggle.dart';
 
 class AppScaffold extends StatelessWidget {
   final String title;
@@ -19,12 +21,16 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     List<Widget> appBarActions = [];
     
     // Add custom actions first
     if (actions != null) {
       appBarActions.addAll(actions!);
     }
+    
+    // Add language toggle
+    appBarActions.add(const LanguageToggle());
     
     // Always add help action
     appBarActions.add(
@@ -45,7 +51,7 @@ class AppScaffold extends StatelessWidget {
           onPressed: () {
             context.go('/');
           },
-          tooltip: 'Home',
+          tooltip: l10n.home,
         ),
       );
     }

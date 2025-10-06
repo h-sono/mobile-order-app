@@ -70,7 +70,7 @@ class SlotNotifier extends StateNotifier<SlotState> {
         selectedSlot: currentSelection,
       );
     } catch (e) {
-      print('Error loading slots: $e');
+      // print('Error loading slots: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),

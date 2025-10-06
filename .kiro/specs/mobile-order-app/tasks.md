@@ -527,6 +527,234 @@ Output:
 ---
 
 ## Phase 5：磨き込み（詳細）
+### T-16：i18n対応（日本語/英語切替）
+---
+Spec: mobile-order-app
+Task: T-16 App: i18n support (Japanese/English)
+Branch: feature/kiro-t16-i18n
+
+Please implement T-16 as defined.
+
+Scope:
+- workspace_root: .
+- target: app/
+
+Steps:
+- add `flutter_localizations` (sdk: flutter) and `intl:^0.19.0` in pubspec.yaml
+- create folder app/lib/l10n/ with:
+  - intl_en.arb
+    {
+      "appTitle": "Mobile Order",
+      "cartEmpty": "Your cart is empty"
+    }
+  - intl_ja.arb
+    {
+      "appTitle": "モバイルオーダー",
+      "cartEmpty": "カートが空です"
+    }
+- generate localization delegates using flutter tools
+- wrap MaterialApp with:
+  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+  supportedLocales: [Locale('en'), Locale('ja')],
+- replace hardcoded strings with AppLocalizations.of(context)! calls
+- add a simple language toggle button (EN/JA)
+
+Verify:
+- run: cd app && flutter analyze
+- run app and confirm text changes between EN and JA
+Output:
+- commit to feature/kiro-t16-i18n
+- PR title: "T-16: Add i18n support (Japanese/English)"
+---
+
+### T-17：アクセシビリティ改善
+---
+Spec: mobile-order-app
+Task: T-17 App: Accessibility improvements
+Branch: feature/kiro-t17-accessibility
+
+Please implement T-17 as defined.
+
+Scope:
+- workspace_root: .
+- target: app/
+
+Steps:
+- ensure all Image widgets have a semanticsLabel property
+- wrap main interactive buttons (e.g., add to cart, confirm) with Semantics widgets providing meaningful labels
+- ensure color contrast ratio meets WCAG AA by adjusting theme colors if needed
+- add debug flag to visualize semantics (debugSemantics)
+- test using Android TalkBack / iOS VoiceOver
+
+Verify:
+- run: cd app && flutter analyze
+Output:
+- commit to feature/kiro-t17-accessibility
+- PR title: "T-17: Improve accessibility (semantics and contrast)"
+---
+
+### T-18：空状態UIの追加
+---
+Spec: mobile-order-app
+Task: T-18 App: Empty state UI
+Branch: feature/kiro-t18-empty-states
+
+Please implement T-18 as defined.
+
+Scope:
+- workspace_root: .
+- target: app/
+
+Steps:
+- in menu_list.dart, cart.dart, and order_history.dart:
+  - if list is empty, show a centered message and icon
+    Example:
+      if (menus.isEmpty)
+        return Center(child: Text(AppLocalizations.of(context)!.noMenu));
+  - design consistent empty-state widget (gray icon + message)
+- reuse for cart empty and order history empty states
+
+Verify:
+- run: cd app && flutter analyze
+- run app and confirm empty lists display fallback UI
+Output:
+- commit to feature/kiro-t18-empty-states
+- PR title: "T-18: Add empty state UI for menus, cart, and orders"
+---
+
+### T-19：エラーハンドリング強化
+---
+Spec: mobile-order-app
+Task: T-19 App: Error handling improvements
+Branch: feature/kiro-t19-error-handling
+
+Please implement T-19 as defined.
+
+Scope:
+- workspace_root: .
+- target: app/
+
+Steps:
+- wrap all HTTP calls in api_service.dart with try/catch
+- handle SocketException and show retry dialog/snackbar
+- handle 422 slot_full error by showing localized message ("Slot full, please choose another time")
+- create a reusable ErrorDialog widget
+- ensure order_confirm.dart displays error messages gracefully
+
+Verify:
+- run: cd app && flutter analyze
+- simulate offline (disable network) and confirm retry dialog appears
+Output:
+- commit to feature/kiro-t19-error-handling
+- PR title: "T-19: Add robust error handling and dialogs"
+---
+
+### T-20：MySQL移行（RDS想定）
+---
+Spec: mobile-order-app
+Task: T-20 API: migrate from SQLite to MySQL
+Branch: feature/kiro-t20-mysql
+
+Please implement T-20 as defined.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- install MySQL client if missing
+- edit .env:
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=mobile_order
+  DB_USERNAME=root
+  DB_PASSWORD=secret
+- edit config/database.php to ensure mysql connection is enabled
+- run: php artisan migrate:fresh --seed
+- verify DB connection works via tinker
+
+Verify:
+- run: cd api && php artisan tinker --execute="DB::connection()->getPdo(); echo 'ok';"
+Output:
+- commit to feature/kiro-t20-mysql
+- PR title: "T-20: Migrate Laravel API from SQLite to MySQL"
+---
+
+### T-21：Redis導入検討
+---
+Spec: mobile-order-app
+Task: T-21 API: Add Redis for cache and session
+Branch: feature/kiro-t21-redis
+
+Please implement T-21 as defined.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- install predis/predis via composer
+- edit .env:
+  CACHE_DRIVER=redis
+  SESSION_DRIVER=redis
+  REDIS_HOST=127.0.0.1
+  REDIS_PORT=6379
+- edit config/cache.php and config/database.php to enable redis connections
+- verify connection by running:
+  php artisan tinker --execute="Cache::put('test','ok',5); echo Cache::get('test');"
+- clear config and cache
+
+Verify:
+- run: cd api && php artisan config:clear && php artisan cache:clear
+Output:
+- commit to feature/kiro-t21-redis
+- PR title: "T-21: Configure Redis for cache and sessions"
+---
+
+### T-22：GitHub Actions → EC2 デプロイ
+---
+Spec: mobile-order-app
+Task: T-22 CI/CD: Deploy API to EC2 via GitHub Actions
+Branch: feature/kiro-t22-deploy
+
+Please implement T-22 as defined.
+
+Scope:
+- workspace_root: .
+- target: api/
+
+Steps:
+- create .github/workflows/deploy.yml
+- include:
+  name: Deploy API to EC2
+  on:
+    push:
+      branches: [main]
+  jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Deploy via SSH
+          uses: appleboy/ssh-action@v1.0.0
+          with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ${{ secrets.EC2_USER }}
+            key: ${{ secrets.EC2_KEY }}
+            script: |
+              cd /var/www/mobile-order/api
+              git pull origin main
+              composer install --no-dev
+              php artisan migrate --force
+- store SSH key and connection info in GitHub secrets
+
+Verify:
+- push to main branch and confirm Action succeeds in GitHub Actions dashboard
+Output:
+- commit to feature/kiro-t22-deploy
+- PR title: "T-22: Setup GitHub Actions CI/CD deployment to EC2"
+---
 
 ## Phase 6：テスト＆リリース準備
 - **[Testing]**  

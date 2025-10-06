@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/app_scaffold.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -7,37 +8,39 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return AppScaffold(
-      title: 'Mobile Order App',
+      title: l10n.appTitle,
       showHomeAction: false, // This is the home screen
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Welcome to Mobile Order App',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              l10n.appTitle,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
                 context.go('/menu');
               },
-              child: const Text('View Menu'),
+              child: Text(l10n.menu),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 context.go('/cart');
               },
-              child: const Text('View Cart'),
+              child: Text(l10n.cart),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 context.go('/slot-selection');
               },
-              child: const Text('Select Pickup Time'),
+              child: Text(l10n.selectPickupTime),
             ),
           ],
         ),

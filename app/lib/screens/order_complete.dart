@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/order_provider.dart';
 import '../widgets/app_scaffold.dart';
 
@@ -11,9 +12,10 @@ class OrderCompleteScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final orderState = ref.watch(orderProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: 'Order Complete',
+      title: l10n.orderComplete,
       showHomeAction: false, // We have custom home action
       actions: [
         IconButton(
@@ -25,15 +27,15 @@ class OrderCompleteScreen extends ConsumerWidget {
         ),
       ],
       child: orderState.currentOrder == null
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('No order found', style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 8),
-                  Text('Please place an order first', style: TextStyle(color: Colors.grey)),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text(l10n.noOrderFound, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(height: 8),
+                  Text(l10n.pleaseOrderFirst, style: const TextStyle(color: Colors.grey)),
                 ],
               ),
             )
@@ -58,7 +60,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                   
                   // Success Message
                   Text(
-                    'Order Placed Successfully!',
+                    l10n.orderPlacedSuccessfully,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.green[700],
@@ -68,7 +70,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   
                   Text(
-                    'Thank you for your order. We\'ll have it ready for pickup at your selected time.',
+                    l10n.thankYouMessage,
                     style: Theme.of(context).textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -82,7 +84,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Order Details',
+                            l10n.orderDetails,
                             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/menu_provider.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/app_scaffold.dart';
@@ -25,9 +26,10 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
   @override
   Widget build(BuildContext context) {
     final menuState = ref.watch(menuProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: 'Menu List',
+      title: l10n.menuTitle,
       actions: [
         Consumer(
           builder: (context, ref, child) {
@@ -80,8 +82,12 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
   }
 
   Widget _buildBody(MenuState menuState) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (menuState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(
+        semanticsLabel: l10n.loading,
+      ));
     }
 
     if (menuState.error != null) {
@@ -92,7 +98,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
             Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
-              'Error loading menu',
+              l10n.error,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
@@ -106,7 +112,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
               onPressed: () {
                 ref.read(menuProvider.notifier).loadMenu();
               },
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -114,20 +120,15 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
     }
 
     if (menuState.items.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.restaurant_menu, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'No menu items available',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Menu is empty but connection successful!',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              l10n.noMenuItems,
+              style: const TextStyle(fontSize: 18, color: Colors.grey),
             ),
           ],
         ),
@@ -244,9 +245,9 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 4),
                           ),
-                          child: const Text(
-                            'Add',
-                            style: TextStyle(fontSize: 12),
+                          child: Text(
+                            l10n.addToCart.length > 6 ? 'Add' : l10n.addToCart,
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ),
                       ),

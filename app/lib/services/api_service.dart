@@ -96,11 +96,12 @@ class ApiService {
             if (slots is List<dynamic>) {
               try {
                 groupedSlots[dateKey] = slots
+                    // ignore: prefer_iterable_wheretype
                     .where((item) => item is Map<String, dynamic>)
                     .map((json) => Slot.fromJson(json as Map<String, dynamic>))
                     .toList();
               } catch (e) {
-                print('Error parsing slots for date $dateKey: $e');
+                // print('Error parsing slots for date $dateKey: $e');
                 groupedSlots[dateKey] = [];
               }
             }
@@ -117,7 +118,7 @@ class ApiService {
                 }
                 groupedSlots[dateKey]!.add(slot);
               } catch (e) {
-                print('Error parsing slot: $e');
+                // print('Error parsing slot: $e');
               }
             }
           }

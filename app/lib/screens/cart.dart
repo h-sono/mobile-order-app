@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/cart_provider.dart';
 import '../widgets/app_scaffold.dart';
 
@@ -10,9 +11,10 @@ class CartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartState = ref.watch(cartProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: 'Cart',
+      title: l10n.cartTitle,
       actions: [
         if (cartState.items.isNotEmpty)
           IconButton(
@@ -23,28 +25,20 @@ class CartScreen extends ConsumerWidget {
           ),
       ],
       child: cartState.items.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.shopping_cart_outlined,
                     size: 64,
                     color: Colors.grey,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
-                    'Your cart is empty',
-                    style: TextStyle(
+                    l10n.cartEmpty,
+                    style: const TextStyle(
                       fontSize: 18,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Add some items from the menu!',
-                    style: TextStyle(
-                      fontSize: 14,
                       color: Colors.grey,
                     ),
                   ),
@@ -148,7 +142,7 @@ class CartScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Total (${cartState.itemCount} items):',
+                            '${l10n.total} (${cartState.itemCount} items):',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -175,9 +169,9 @@ class CartScreen extends ConsumerWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                          child: const Text(
-                            'Select Pickup Time',
-                            style: TextStyle(fontSize: 16),
+                          child: Text(
+                            l10n.selectPickupTime,
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
                       ),
