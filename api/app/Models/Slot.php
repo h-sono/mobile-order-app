@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
 class Slot extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'date',
         'start_time',
@@ -21,6 +24,10 @@ class Slot extends Model
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
         'is_available' => 'boolean',
+    ];
+
+    protected $dates = [
+        'deleted_at',
     ];
 
     // Check if slot is available for booking

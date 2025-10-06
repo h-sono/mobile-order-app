@@ -49,14 +49,18 @@ class AdminMenuController extends Controller
 
     public function index(): JsonResponse
     {
-        $menuItems = MenuItem::orderBy('category')
+        // Include soft deleted items for admin view
+        $menuItems = MenuItem::withTrashed()
+            ->orderBy('category')
             ->orderBy('name')
             ->get();
 
         $stats = [
             'total_items' => $menuItems->count(),
-            'available_items' => $menuItems->where('is_available', true)->count(),
-            'unavailable_items' => $menuItems->where('is_available', false)->count(),
+            'active_items' => $menuItems->whereNull('deleted_at')->count(),
+            'available_items' => $menuItems->where('is_available', true)->whereNull('deleted_at')->count(),
+            'unavailable_items' => $menuItems->where('is_available', false)->whereNull('deleted_at')->count(),
+            'deleted_items' => $menuItems->whereNotNull('deleted_at')->count(),
         ];
 
         $groupedItems = $menuItems->groupBy('category');
@@ -77,6 +81,8 @@ class AdminMenuController extends Controller
                                 'category' => $item->category,
                                 'image_url' => $item->image_url,
                                 'is_available' => $item->is_available,
+                                'is_deleted' => $item->deleted_at !== null,
+                                'deleted_at' => $item->deleted_at?->format('Y-m-d H:i:s'),
                                 'updated_at' => $item->updated_at->format('Y-m-d H:i:s'),
                             ];
                         })->values(),
@@ -84,5 +90,77 @@ class AdminMenuController extends Controller
                 })->values(),
             ],
         ]);
+    }
+
+    public function destroy(MenuItem $menuItem): JsonResponse
+    {
+        try {
+            $menuItem->delete(); // Soft delete
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu item deleted successfully',
+                'data' => [
+                    'id' => $menuItem->id,
+                    'name' => $menuItem->name,
+                    'deleted_at' => $menuItem->deleted_at->format('Y-m-d H:i:s'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete menu item',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        try {
+            $menuItem = MenuItem::withTrashed()->findOrFail($id);
+            $menuItem->restore();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu item restored successfully',
+                'data' => [
+                    'id' => $menuItem->id,
+                    'name' => $menuItem->name,
+                    'restored_at' => now()->format('Y-m-d H:i:s'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to restore menu item',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function forceDelete(int $id): JsonResponse
+    {
+        try {
+            $menuItem = MenuItem::withTrashed()->findOrFail($id);
+            $name = $menuItem->name;
+            $menuItem->forceDelete(); // Permanent delete
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu item permanently deleted',
+                'data' => [
+                    'id' => $id,
+                    'name' => $name,
+                    'permanently_deleted_at' => now()->format('Y-m-d H:i:s'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to permanently delete menu item',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

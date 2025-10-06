@@ -9,9 +9,9 @@ import '../models/cart_item.dart';
 
 class ApiService {
   final String baseUrl;
-  
+
   ApiService(this.baseUrl);
-  
+
   Future<List<MenuItem>> getMenu() async {
     try {
       final response = await http.get(
@@ -21,7 +21,7 @@ class ApiService {
           'Accept': 'application/json',
         },
       );
-      
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => MenuItem.fromJson(json)).toList();
@@ -42,7 +42,7 @@ class ApiService {
           'Accept': 'application/json',
         },
       );
-      
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         return MenuItem.fromJson(data);
@@ -68,17 +68,65 @@ class ApiService {
           'Accept': 'application/json',
         },
       );
-      
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final Map<String, dynamic> slotsData = data['slots'] as Map<String, dynamic>;
-        
+        final dynamic responseData = json.decode(response.body);
+
+        // Handle different response formats
+        Map<String, dynamic> data;
+        if (responseData is Map<String, dynamic>) {
+          data = responseData;
+        } else {
+          throw Exception(
+            'Invalid response format: expected Map but got ${responseData.runtimeType}',
+          );
+        }
+
+        // Check if slots data exists and is in the expected format
+        if (!data.containsKey('slots')) {
+          throw Exception('Response missing slots data');
+        }
+
+        final dynamic slotsData = data['slots'];
         final Map<String, List<Slot>> groupedSlots = {};
-        slotsData.forEach((date, slots) {
-          final List<dynamic> slotsList = slots as List<dynamic>;
-          groupedSlots[date] = slotsList.map((json) => Slot.fromJson(json)).toList();
-        });
-        
+
+        if (slotsData is Map<String, dynamic>) {
+          // Handle grouped slots format: {"2025-01-01": [...], "2025-01-02": [...]}
+          slotsData.forEach((dateKey, slots) {
+            if (slots is List<dynamic>) {
+              try {
+                groupedSlots[dateKey] = slots
+                    .where((item) => item is Map<String, dynamic>)
+                    .map((json) => Slot.fromJson(json as Map<String, dynamic>))
+                    .toList();
+              } catch (e) {
+                print('Error parsing slots for date $dateKey: $e');
+                groupedSlots[dateKey] = [];
+              }
+            }
+          });
+        } else if (slotsData is List<dynamic>) {
+          // Handle flat list format: [{"date": "2025-01-01", ...}, ...]
+          for (final item in slotsData) {
+            if (item is Map<String, dynamic>) {
+              try {
+                final slot = Slot.fromJson(item);
+                final dateKey = slot.date;
+                if (!groupedSlots.containsKey(dateKey)) {
+                  groupedSlots[dateKey] = [];
+                }
+                groupedSlots[dateKey]!.add(slot);
+              } catch (e) {
+                print('Error parsing slot: $e');
+              }
+            }
+          }
+        } else {
+          throw Exception(
+            'Invalid slots data format: expected Map or List but got ${slotsData.runtimeType}',
+          );
+        }
+
         return groupedSlots;
       } else {
         throw Exception('Failed to load slots: ${response.statusCode}');
@@ -97,7 +145,7 @@ class ApiService {
           'Accept': 'application/json',
         },
       );
-      
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         return Slot.fromJson(data);
@@ -118,17 +166,29 @@ class ApiService {
     String? specialInstructions,
   }) async {
     try {
-      final requestBody = {
+      final requestBody = <String, dynamic>{
         'slot_id': slotId,
         'customer_name': customerName,
-        'customer_email': customerEmail,
-        'customer_phone': customerPhone,
-        'items': items.map((item) => {
-          'menu_item_id': item.menuItem.id,
-          'quantity': item.quantity,
-        }).toList(),
-        'special_instructions': specialInstructions,
+        'items': items
+            .map(
+              (item) => {
+                'menu_item_id': item.menuItem.id,
+                'quantity': item.quantity,
+              },
+            )
+            .toList(),
       };
+
+      // Only add optional fields if they are not null or empty
+      if (customerEmail != null && customerEmail.isNotEmpty) {
+        requestBody['customer_email'] = customerEmail;
+      }
+      if (customerPhone != null && customerPhone.isNotEmpty) {
+        requestBody['customer_phone'] = customerPhone;
+      }
+      if (specialInstructions != null && specialInstructions.isNotEmpty) {
+        requestBody['special_instructions'] = specialInstructions;
+      }
 
       final response = await http.post(
         Uri.parse('$baseUrl/api/orders'),
@@ -138,7 +198,7 @@ class ApiService {
         },
         body: json.encode(requestBody),
       );
-      
+
       if (response.statusCode == 201) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['success'] == true) {
@@ -148,7 +208,10 @@ class ApiService {
         }
       } else {
         final Map<String, dynamic> errorData = json.decode(response.body);
-        throw Exception(errorData['message'] ?? 'Failed to create order: ${response.statusCode}');
+        throw Exception(
+          errorData['message'] ??
+              'Failed to create order: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Network error: $e');
@@ -164,7 +227,7 @@ class ApiService {
           'Accept': 'application/json',
         },
       );
-      
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['success'] == true) {

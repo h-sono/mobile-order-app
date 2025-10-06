@@ -32,26 +32,61 @@ class Order {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    final orderData = json['order'] as Map<String, dynamic>;
+    try {
+      // Handle both direct order data and nested order data
+      final orderData = json.containsKey('order') 
+          ? json['order'] as Map<String, dynamic>
+          : json;
 
-    return Order(
-      id: orderData['id'] as int,
-      orderNumber: orderData['order_number'] as String,
-      status: orderData['status'] as String,
-      customerName: orderData['customer_name'] as String,
-      customerEmail: orderData['customer_email'] as String?,
-      customerPhone: orderData['customer_phone'] as String?,
-      subtotal: double.parse(orderData['subtotal'].toString()),
-      tax: double.parse(orderData['tax'].toString()),
-      total: double.parse(orderData['total'].toString()),
-      pickupTime: orderData['pickup_time'] as String,
-      specialInstructions: orderData['special_instructions'] as String?,
-      slot: SlotInfo.fromJson(orderData['slot']),
-      items: (orderData['items'] as List<dynamic>)
-          .map((item) => OrderItem.fromJson(item))
-          .toList(),
-      createdAt: orderData['created_at'] as String,
-    );
+      return Order(
+        id: _parseInt(orderData['id']),
+        orderNumber: _parseString(orderData['order_number']),
+        status: _parseString(orderData['status']),
+        customerName: _parseString(orderData['customer_name']),
+        customerEmail: _parseNullableString(orderData['customer_email']),
+        customerPhone: _parseNullableString(orderData['customer_phone']),
+        subtotal: _parseDouble(orderData['subtotal']),
+        tax: _parseDouble(orderData['tax']),
+        total: _parseDouble(orderData['total']),
+        pickupTime: _parseString(orderData['pickup_time']),
+        specialInstructions: _parseNullableString(orderData['special_instructions']),
+        slot: SlotInfo.fromJson(orderData['slot'] as Map<String, dynamic>),
+        items: (orderData['items'] as List<dynamic>)
+            .map((item) => OrderItem.fromJson(item as Map<String, dynamic>))
+            .toList(),
+        createdAt: _parseString(orderData['created_at']),
+      );
+    } catch (e) {
+      throw Exception('Failed to parse Order from JSON: $e. JSON: $json');
+    }
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.parse(value);
+    if (value is double) return value.toInt();
+    throw Exception('Cannot parse int from $value (${value.runtimeType})');
+  }
+
+  static double _parseDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.parse(value);
+    throw Exception('Cannot parse double from $value (${value.runtimeType})');
+  }
+
+  static String _parseString(dynamic value) {
+    if (value is String) return value;
+    if (value != null) return value.toString();
+    throw Exception('Cannot parse string from null value');
+  }
+
+  static String? _parseNullableString(dynamic value) {
+    if (value == null) return null;
+    if (value is String) {
+      return value.isEmpty ? null : value;
+    }
+    return value.toString();
   }
 
   bool get isPending => status == 'pending';
@@ -78,13 +113,17 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
-    return OrderItem(
-      menuItemId: json['menu_item_id'] as int,
-      name: json['name'] as String,
-      quantity: json['quantity'] as int,
-      unitPrice: double.parse(json['unit_price'].toString()),
-      totalPrice: double.parse(json['total_price'].toString()),
-    );
+    try {
+      return OrderItem(
+        menuItemId: Order._parseInt(json['menu_item_id']),
+        name: Order._parseString(json['name']),
+        quantity: Order._parseInt(json['quantity']),
+        unitPrice: Order._parseDouble(json['unit_price']),
+        totalPrice: Order._parseDouble(json['total_price']),
+      );
+    } catch (e) {
+      throw Exception('Failed to parse OrderItem from JSON: $e. JSON: $json');
+    }
   }
 }
 
@@ -96,10 +135,14 @@ class SlotInfo {
   SlotInfo({required this.id, required this.date, required this.timeSlot});
 
   factory SlotInfo.fromJson(Map<String, dynamic> json) {
-    return SlotInfo(
-      id: json['id'] as int,
-      date: json['date'] as String,
-      timeSlot: json['time_slot'] as String,
-    );
+    try {
+      return SlotInfo(
+        id: Order._parseInt(json['id']),
+        date: Order._parseString(json['date']),
+        timeSlot: Order._parseString(json['time_slot']),
+      );
+    } catch (e) {
+      throw Exception('Failed to parse SlotInfo from JSON: $e. JSON: $json');
+    }
   }
 }

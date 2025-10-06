@@ -48,11 +48,29 @@ class SlotNotifier extends StateNotifier<SlotState> {
     
     try {
       final groupedSlots = await _apiService.getSlots(date: date);
+      
+      // Clear selected slot if it's no longer available
+      Slot? currentSelection = state.selectedSlot;
+      if (currentSelection != null) {
+        bool slotStillAvailable = false;
+        for (final slots in groupedSlots.values) {
+          if (slots.any((slot) => slot.id == currentSelection!.id)) {
+            slotStillAvailable = true;
+            break;
+          }
+        }
+        if (!slotStillAvailable) {
+          currentSelection = null;
+        }
+      }
+      
       state = state.copyWith(
         groupedSlots: groupedSlots,
         isLoading: false,
+        selectedSlot: currentSelection,
       );
     } catch (e) {
+      print('Error loading slots: $e');
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),

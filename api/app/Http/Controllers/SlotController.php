@@ -12,7 +12,8 @@ class SlotController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Slot::where('is_available', true)
-            ->where('date', '>=', Carbon::today());
+            ->where('date', '>=', Carbon::today())
+            ->whereNull('deleted_at'); // 明示的に削除されていないスロットのみ
 
         // Filter by specific date if provided
         if ($request->has('date')) {

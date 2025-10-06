@@ -38,7 +38,16 @@ class OrderController extends Controller
         try {
             return DB::transaction(function () use ($request) {
                 // Check slot availability
-                $slot = Slot::findOrFail($request->slot_id);
+                $slot = Slot::where('id', $request->slot_id)
+                    ->whereNull('deleted_at')
+                    ->first();
+                
+                if (!$slot) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selected time slot is no longer available',
+                    ], 400);
+                }
                 
                 if (!$slot->isBookable()) {
                     return response()->json([
@@ -52,7 +61,16 @@ class OrderController extends Controller
                 $orderItemsData = [];
 
                 foreach ($request->items as $itemData) {
-                    $menuItem = MenuItem::findOrFail($itemData['menu_item_id']);
+                    $menuItem = MenuItem::where('id', $itemData['menu_item_id'])
+                        ->whereNull('deleted_at')
+                        ->first();
+                    
+                    if (!$menuItem) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'One or more menu items are no longer available',
+                        ], 400);
+                    }
                     
                     if (!$menuItem->is_available) {
                         return response()->json([

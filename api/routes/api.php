@@ -26,3 +26,6 @@ Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])
 Route::get('/admin/orders', [AdminOrderController::class, 'index'])->middleware('apikey');
 Route::get('/admin/menu', [AdminMenuController::class, 'index'])->middleware('apikey');
 Route::patch('/admin/menu/{menuItem}/availability', [AdminMenuController::class, 'updateAvailability'])->middleware('apikey');
+Route::delete('/admin/menu/{menuItem}', [AdminMenuController::class, 'destroy'])->middleware('apikey');
+Route::post('/admin/menu/{id}/restore', [AdminMenuController::class, 'restore'])->middleware('apikey');
+Route::delete('/admin/menu/{id}/force', [AdminMenuController::class, 'forceDelete'])->middleware('apikey');
