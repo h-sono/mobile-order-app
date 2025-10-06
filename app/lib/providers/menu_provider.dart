@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_service.dart';
+import '../models/menu_item.dart';
 
 // Menu state
 class MenuState {
-  final List<dynamic> items;
+  final List<MenuItem> items;
   final bool isLoading;
   final String? error;
   
@@ -14,7 +15,7 @@ class MenuState {
   });
   
   MenuState copyWith({
-    List<dynamic>? items,
+    List<MenuItem>? items,
     bool? isLoading,
     String? error,
   }) {

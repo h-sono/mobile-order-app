@@ -9,3 +9,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/menu', [MenuController::class, 'index']);
+Route::get('/menu/{menuItem}', [MenuController::class, 'show']);
