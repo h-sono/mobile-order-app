@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/cart_provider.dart';
 import '../providers/slot_provider.dart';
 import '../providers/order_provider.dart';
@@ -34,17 +35,18 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
     final cartState = ref.watch(cartProvider);
     final slotState = ref.watch(slotProvider);
     final orderState = ref.watch(orderProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (cartState.items.isEmpty) {
       return AppScaffold(
-        title: 'Order Confirmation',
-        child: const Center(
+        title: l10n.orderConfirmation,
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text('Your cart is empty', style: TextStyle(fontSize: 18)),
+              const Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(l10n.yourCartIsEmpty, style: const TextStyle(fontSize: 18)),
             ],
           ),
         ),
@@ -53,14 +55,14 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
 
     if (slotState.selectedSlot == null) {
       return AppScaffold(
-        title: 'Order Confirmation',
-        child: const Center(
+        title: l10n.orderConfirmation,
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.schedule_outlined, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
-              Text('Please select a pickup time', style: TextStyle(fontSize: 18)),
+              const Icon(Icons.schedule_outlined, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(l10n.pleaseSelectPickupTime, style: const TextStyle(fontSize: 18)),
             ],
           ),
         ),
@@ -68,7 +70,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
     }
 
     return AppScaffold(
-      title: 'Order Confirmation',
+      title: l10n.orderConfirmation,
       child: orderState.isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -123,9 +125,9 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
-                        child: const Text(
-                          'Place Order',
-                          style: TextStyle(fontSize: 16),
+                        child: Text(
+                          l10n.placeOrder,
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
                     ),
@@ -137,6 +139,8 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
   }
 
   Widget _buildOrderSummary(CartState cartState, SlotState slotState) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -144,7 +148,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Order Summary',
+              l10n.orderSummary,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -160,7 +164,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Pickup Time', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      Text(l10n.pickupTime, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                       Text(
                         '${slotState.selectedSlot!.date} ${slotState.selectedSlot!.timeSlot}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -180,7 +184,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
                   Expanded(
                     child: Text('${item.menuItem.name} x${item.quantity}'),
                   ),
-                  Text('\$${item.totalPrice.toStringAsFixed(2)}'),
+                  Text('¥${item.totalPrice.toInt()}'),
                 ],
               ),
             )),
@@ -196,7 +200,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(
-                  '\$${cartState.total.toStringAsFixed(2)}',
+                  '¥${cartState.total.toInt()}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -212,6 +216,8 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
   }
 
   Widget _buildCustomerForm() {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -219,7 +225,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Customer Information',
+              l10n.customerInformation,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -228,13 +234,13 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
             
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Full Name *',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.fullName,
+                border: const OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your name';
+                  return l10n.pleaseEnterName;
                 }
                 return null;
               },
@@ -243,15 +249,15 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
             
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.emailOptional,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value != null && value.isNotEmpty) {
                   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                    return 'Please enter a valid email';
+                    return l10n.pleaseEnterValidEmail;
                   }
                 }
                 return null;
@@ -261,9 +267,9 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
             
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.phoneOptional,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.phone,
             ),
@@ -274,6 +280,8 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
   }
 
   Widget _buildSpecialInstructions() {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -281,7 +289,7 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Special Instructions',
+              l10n.specialInstructions,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -290,10 +298,10 @@ class _OrderConfirmationScreenState extends ConsumerState<OrderConfirmationScree
             
             TextFormField(
               controller: _instructionsController,
-              decoration: const InputDecoration(
-                labelText: 'Any special requests? (optional)',
-                border: OutlineInputBorder(),
-                hintText: 'e.g., Extra sauce, no onions, etc.',
+              decoration: InputDecoration(
+                labelText: l10n.anySpecialRequests,
+                border: const OutlineInputBorder(),
+                hintText: l10n.specialRequestsHint,
               ),
               maxLines: 3,
               maxLength: 500,

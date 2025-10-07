@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/menu_provider.dart';
 import '../providers/cart_provider.dart';
+import '../providers/language_provider.dart';
 import '../widgets/app_scaffold.dart';
 
 class MenuListScreen extends ConsumerStatefulWidget {
@@ -19,14 +20,23 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
     super.initState();
     // Load menu data when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(menuProvider.notifier).loadMenu();
+      final currentLocale = ref.read(languageProvider);
+      ref.read(menuProvider.notifier).loadMenu(locale: currentLocale.languageCode);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final menuState = ref.watch(menuProvider);
+    final currentLocale = ref.watch(languageProvider);
     final l10n = AppLocalizations.of(context)!;
+
+    // Listen for language changes and reload menu
+    ref.listen<Locale>(languageProvider, (previous, next) {
+      if (previous != null && previous.languageCode != next.languageCode) {
+        ref.read(menuProvider.notifier).reloadForLocale(next.languageCode);
+      }
+    });
 
     return AppScaffold(
       title: l10n.menuTitle,
@@ -73,7 +83,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
         IconButton(
           icon: const Icon(Icons.refresh),
           onPressed: () {
-            ref.read(menuProvider.notifier).loadMenu();
+            ref.read(menuProvider.notifier).loadMenu(locale: currentLocale.languageCode);
           },
         ),
       ],
@@ -83,11 +93,12 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
 
   Widget _buildBody(MenuState menuState) {
     final l10n = AppLocalizations.of(context)!;
-    
+    final currentLocale = ref.watch(languageProvider);
+
     if (menuState.isLoading) {
-      return Center(child: CircularProgressIndicator(
-        semanticsLabel: l10n.loading,
-      ));
+      return Center(
+        child: CircularProgressIndicator(semanticsLabel: l10n.loading),
+      );
     }
 
     if (menuState.error != null) {
@@ -97,10 +108,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
           children: [
             Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
-            Text(
-              l10n.error,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+            Text(l10n.error, style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               menuState.error!,
@@ -190,28 +198,45 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.name,
+                          item.getLocalizedName(currentLocale.languageCode),
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
-                        if (item.description != null) ...[
+                        if (item.getLocalizedDescription(
+                              currentLocale.languageCode,
+                            ) !=
+                            null) ...[
                           const SizedBox(height: 4),
                           Text(
-                            item.description!,
+                            item.getLocalizedDescription(
+                              currentLocale.languageCode,
+                            )!,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontSize: 14),
                           ),
                         ],
                         const SizedBox(height: 4),
-                        Text(
-                          item.category,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              item.getLocalizedCategory(currentLocale.languageCode),
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                            if (item.localeFallback) ...[
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.translate,
+                                size: 12,
+                                color: Colors.orange[600],
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),
@@ -221,7 +246,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        '\$${item.price.toStringAsFixed(2)}',
+                        '¥${item.price.toInt()}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -237,7 +262,9 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                             ref.read(cartProvider.notifier).addItem(item);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('${item.name} added to cart'),
+                                content: Text(
+                                  '${item.getLocalizedName(currentLocale.languageCode)} added to cart',
+                                ),
                                 duration: const Duration(seconds: 1),
                               ),
                             );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/cart_provider.dart';
+import '../providers/language_provider.dart';
 import '../widgets/app_scaffold.dart';
 
 class CartScreen extends ConsumerWidget {
@@ -11,6 +12,7 @@ class CartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartState = ref.watch(cartProvider);
+    final currentLocale = ref.watch(languageProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
@@ -87,11 +89,11 @@ class CartScreen extends ConsumerWidget {
                                   child: const Icon(Icons.restaurant),
                                 ),
                           title: Text(
-                            cartItem.menuItem.name,
+                            cartItem.menuItem.getLocalizedName(currentLocale.languageCode),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            '\$${cartItem.menuItem.price.toStringAsFixed(2)} each',
+                            '¥${cartItem.menuItem.price.toInt()} each',
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -149,7 +151,7 @@ class CartScreen extends ConsumerWidget {
                             ),
                           ),
                           Text(
-                            '\$${cartState.total.toStringAsFixed(2)}',
+                            '¥${cartState.total.toInt()}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,

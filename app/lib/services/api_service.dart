@@ -12,14 +12,22 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
-  Future<List<MenuItem>> getMenu() async {
+  Future<List<MenuItem>> getMenu({String? locale}) async {
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      // Add locale header if provided
+      if (locale != null) {
+        headers['X-Locale'] = locale;
+        headers['Accept-Language'] = locale;
+      }
+
       final response = await http.get(
         Uri.parse('$baseUrl/api/menu'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: headers,
       );
 
       if (response.statusCode == 200) {
@@ -33,14 +41,22 @@ class ApiService {
     }
   }
 
-  Future<MenuItem> getMenuItem(int id) async {
+  Future<MenuItem> getMenuItem(int id, {String? locale}) async {
     try {
+      final headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      };
+
+      // Add locale header if provided
+      if (locale != null) {
+        headers['X-Locale'] = locale;
+        headers['Accept-Language'] = locale;
+      }
+
       final response = await http.get(
         Uri.parse('$baseUrl/api/menu/$id'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: headers,
       );
 
       if (response.statusCode == 200) {

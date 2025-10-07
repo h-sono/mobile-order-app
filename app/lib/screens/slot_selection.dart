@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/slot_provider.dart';
 import '../models/slot.dart';
 import '../widgets/app_scaffold.dart';
@@ -28,9 +29,10 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     final slotState = ref.watch(slotProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return AppScaffold(
-      title: 'Select Pickup Time',
+      title: l10n.selectPickupTime,
       actions: [
         IconButton(
           icon: const Icon(Icons.refresh),
@@ -58,7 +60,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Selected Time',
+                              l10n.selectedTime,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],
@@ -75,7 +77,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
                         ),
                       ),
                       Text(
-                        '${slotState.selectedSlot!.remainingCapacity} spots left',
+                        '${slotState.selectedSlot!.remainingCapacity} ${l10n.spotsLeft}',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
@@ -91,9 +93,9 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text(
-                        'Confirm Time Slot',
-                        style: TextStyle(fontSize: 16),
+                      child: Text(
+                        l10n.confirmTimeSlot,
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
@@ -106,8 +108,12 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
   }
 
   Widget _buildBody(SlotState slotState) {
+    final l10n = AppLocalizations.of(context)!;
+    
     if (slotState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(
+        semanticsLabel: l10n.loading,
+      ));
     }
 
     if (slotState.error != null) {
@@ -118,7 +124,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
             Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
-              'Error loading time slots',
+              l10n.errorLoadingTimeSlots,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
@@ -132,7 +138,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
               onPressed: () {
                 ref.read(slotProvider.notifier).loadSlots(date: selectedDate);
               },
-              child: const Text('Retry'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -140,20 +146,20 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
     }
 
     if (slotState.groupedSlots.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.schedule_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.schedule_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'No time slots available',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              l10n.noTimeSlotsAvailable,
+              style: const TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Please try again later',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              l10n.pleaseTryAgainLater,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
@@ -280,7 +286,7 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${slot.remainingCapacity} left',
+                    '${slot.remainingCapacity} ${AppLocalizations.of(context)!.left}',
                     style: TextStyle(
                       fontSize: 12,
                       color: slot.isAlmostFull
@@ -300,15 +306,16 @@ class _SlotSelectionScreenState extends ConsumerState<SlotSelectionScreen> {
   String _formatDate(String dateString) {
     final date = DateTime.parse(dateString);
     final now = DateTime.now();
+    final l10n = AppLocalizations.of(context)!;
 
     if (date.year == now.year &&
         date.month == now.month &&
         date.day == now.day) {
-      return 'Today';
+      return l10n.today;
     } else if (date.year == now.year &&
         date.month == now.month &&
         date.day == now.day + 1) {
-      return 'Tomorrow';
+      return l10n.tomorrow;
     } else {
       const months = [
         'Jan',

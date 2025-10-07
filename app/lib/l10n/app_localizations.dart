@@ -337,6 +337,402 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Home'**
   String get backToHome;
+
+  /// No description provided for @helpGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Guide'**
+  String get helpGuide;
+
+  /// No description provided for @welcomeToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Mobile Order App!'**
+  String get welcomeToApp;
+
+  /// No description provided for @helpDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'This guide will help you navigate through the app and place your orders easily.'**
+  String get helpDescription;
+
+  /// No description provided for @howToPlaceOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Place an Order'**
+  String get howToPlaceOrder;
+
+  /// No description provided for @browseMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Menu'**
+  String get browseMenu;
+
+  /// No description provided for @browseMenuDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to the menu to see all available items.'**
+  String get browseMenuDesc;
+
+  /// No description provided for @addItemsToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Items to Cart'**
+  String get addItemsToCart;
+
+  /// No description provided for @addItemsToCartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your favorite items and add them to your cart.'**
+  String get addItemsToCartDesc;
+
+  /// No description provided for @reviewYourCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Your Cart'**
+  String get reviewYourCart;
+
+  /// No description provided for @reviewYourCartDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your selected items and adjust quantities.'**
+  String get reviewYourCartDesc;
+
+  /// No description provided for @selectPickupTimeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when you want to pick up your order.'**
+  String get selectPickupTimeDesc;
+
+  /// No description provided for @confirmOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Order'**
+  String get confirmOrder;
+
+  /// No description provided for @confirmOrderDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Review everything and place your order.'**
+  String get confirmOrderDesc;
+
+  /// No description provided for @helpfulTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful Tips'**
+  String get helpfulTips;
+
+  /// No description provided for @needMoreHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Need More Help?'**
+  String get needMoreHelp;
+
+  /// No description provided for @needMoreHelpDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If you encounter any issues or have questions:'**
+  String get needMoreHelpDesc;
+
+  /// No description provided for @selectedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Time'**
+  String get selectedTime;
+
+  /// No description provided for @spotsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'spots left'**
+  String get spotsLeft;
+
+  /// No description provided for @confirmTimeSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Time Slot'**
+  String get confirmTimeSlot;
+
+  /// No description provided for @errorLoadingTimeSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading time slots'**
+  String get errorLoadingTimeSlots;
+
+  /// No description provided for @noTimeSlotsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No time slots available'**
+  String get noTimeSlotsAvailable;
+
+  /// No description provided for @pleaseTryAgainLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later'**
+  String get pleaseTryAgainLater;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @left.
+  ///
+  /// In en, this message translates to:
+  /// **'left'**
+  String get left;
+
+  /// No description provided for @orderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Summary'**
+  String get orderSummary;
+
+  /// No description provided for @customerInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Information'**
+  String get customerInformation;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name *'**
+  String get fullName;
+
+  /// No description provided for @pleaseEnterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get pleaseEnterName;
+
+  /// No description provided for @emailOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
+  String get emailOptional;
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @phoneOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number (optional)'**
+  String get phoneOptional;
+
+  /// No description provided for @specialInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Instructions'**
+  String get specialInstructions;
+
+  /// No description provided for @anySpecialRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Any special requests? (optional)'**
+  String get anySpecialRequests;
+
+  /// No description provided for @specialRequestsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Extra sauce, no onions, etc.'**
+  String get specialRequestsHint;
+
+  /// No description provided for @yourCartIsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get yourCartIsEmpty;
+
+  /// No description provided for @pleaseSelectPickupTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a pickup time'**
+  String get pleaseSelectPickupTime;
+
+  /// No description provided for @tapMenuFromHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap on \"Menu\" from the home screen'**
+  String get tapMenuFromHome;
+
+  /// No description provided for @browseDifferentCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse through different categories (Pasta, Sides, Drinks)'**
+  String get browseDifferentCategories;
+
+  /// No description provided for @viewItemDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View item details, prices, and descriptions'**
+  String get viewItemDetails;
+
+  /// No description provided for @checkAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Check availability status'**
+  String get checkAvailability;
+
+  /// No description provided for @tapAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the \"Add\" button next to any menu item'**
+  String get tapAddButton;
+
+  /// No description provided for @seeConfirmationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'See confirmation message when item is added'**
+  String get seeConfirmationMessage;
+
+  /// No description provided for @watchCartBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the cart badge update with item count'**
+  String get watchCartBadge;
+
+  /// No description provided for @tapCartIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the cart icon to view your selections'**
+  String get tapCartIcon;
+
+  /// No description provided for @viewSelectedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'View all selected items with prices'**
+  String get viewSelectedItems;
+
+  /// No description provided for @useAddRemoveButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Use + and - buttons to adjust quantities'**
+  String get useAddRemoveButtons;
+
+  /// No description provided for @removeItemsIfNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove items if needed'**
+  String get removeItemsIfNeeded;
+
+  /// No description provided for @seeTotalCalculation.
+  ///
+  /// In en, this message translates to:
+  /// **'See total price calculation'**
+  String get seeTotalCalculation;
+
+  /// No description provided for @tapSelectPickupTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Select Pickup Time\" from cart'**
+  String get tapSelectPickupTime;
+
+  /// No description provided for @choosePreferredDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred date'**
+  String get choosePreferredDate;
+
+  /// No description provided for @selectFromTimeSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from available time slots'**
+  String get selectFromTimeSlots;
+
+  /// No description provided for @seeRemainingCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'See remaining capacity for each slot'**
+  String get seeRemainingCapacity;
+
+  /// No description provided for @reviewOrderSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Review your order summary'**
+  String get reviewOrderSummary;
+
+  /// No description provided for @confirmPickupAndTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm pickup time and total amount'**
+  String get confirmPickupAndTotal;
+
+  /// No description provided for @tapPlaceOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Place Order\" to submit'**
+  String get tapPlaceOrder;
+
+  /// No description provided for @receiveOrderConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive order confirmation with QR code'**
+  String get receiveOrderConfirmation;
+
+  /// No description provided for @orderOffPeakHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Order during off-peak hours for faster preparation'**
+  String get orderOffPeakHours;
+
+  /// No description provided for @arriveOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive on time for your selected pickup slot'**
+  String get arriveOnTime;
+
+  /// No description provided for @keepQrCodeReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your order QR code ready for pickup'**
+  String get keepQrCodeReady;
+
+  /// No description provided for @useRefreshButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the refresh button if menu items don\'t load'**
+  String get useRefreshButton;
+
+  /// No description provided for @tapHomeIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the home icon to return to main screen anytime'**
+  String get tapHomeIcon;
+
+  /// No description provided for @visitRestaurantCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit us at the restaurant counter'**
+  String get visitRestaurantCounter;
+
+  /// No description provided for @callDuringBusinessHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Call us during business hours'**
+  String get callDuringBusinessHours;
+
+  /// No description provided for @tryRefreshingApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Try refreshing the app if something doesn\'t work'**
+  String get tryRefreshingApp;
+
+  /// No description provided for @failedToLoadMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load menu. Please check your connection and try again.'**
+  String get failedToLoadMenu;
 }
 
 class _AppLocalizationsDelegate

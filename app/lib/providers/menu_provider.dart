@@ -7,18 +7,10 @@ class MenuState {
   final List<MenuItem> items;
   final bool isLoading;
   final String? error;
-  
-  const MenuState({
-    this.items = const [],
-    this.isLoading = false,
-    this.error,
-  });
-  
-  MenuState copyWith({
-    List<MenuItem>? items,
-    bool? isLoading,
-    String? error,
-  }) {
+
+  const MenuState({this.items = const [], this.isLoading = false, this.error});
+
+  MenuState copyWith({List<MenuItem>? items, bool? isLoading, String? error}) {
     return MenuState(
       items: items ?? this.items,
       isLoading: isLoading ?? this.isLoading,
@@ -30,23 +22,29 @@ class MenuState {
 // Menu provider
 class MenuNotifier extends StateNotifier<MenuState> {
   final ApiService _apiService;
-  
+  String? _currentLocale;
+
   MenuNotifier(this._apiService) : super(const MenuState());
-  
-  Future<void> loadMenu() async {
+
+  Future<void> loadMenu({String? locale}) async {
     state = state.copyWith(isLoading: true, error: null);
-    
+    _currentLocale = locale;
+
     try {
-      final items = await _apiService.getMenu();
-      state = state.copyWith(
-        items: items,
-        isLoading: false,
-      );
+      final items = await _apiService.getMenu(locale: locale);
+      state = state.copyWith(items: items, isLoading: false);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'Failed to load menu. Please check your connection and try again.',
       );
+    }
+  }
+
+  // Reload menu when language changes
+  Future<void> reloadForLocale(String locale) async {
+    if (_currentLocale != locale) {
+      await loadMenu(locale: locale);
     }
   }
 }

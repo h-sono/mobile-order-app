@@ -96,7 +96,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                           _buildDetailRow('Pickup Date', orderState.currentOrder!.slot.date),
                           _buildDetailRow('Pickup Time', orderState.currentOrder!.slot.timeSlot),
                           _buildDetailRow('Status', _getStatusText(orderState.currentOrder!.status)),
-                          _buildDetailRow('Total', '\$${orderState.currentOrder!.total.toStringAsFixed(2)}'),
+                          _buildDetailRow('Total', '¥${orderState.currentOrder!.total.toInt()}'),
                           
                           if (orderState.currentOrder!.specialInstructions != null) ...[
                             const SizedBox(height: 8),
@@ -186,7 +186,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                                 Expanded(
                                   child: Text('${item.name} x${item.quantity}'),
                                 ),
-                                Text('\$${item.totalPrice.toStringAsFixed(2)}'),
+                                Text('¥${item.totalPrice.toInt()}'),
                               ],
                             ),
                           )),
@@ -201,7 +201,7 @@ class OrderCompleteScreen extends ConsumerWidget {
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               Text(
-                                '\$${orderState.currentOrder!.total.toStringAsFixed(2)}',
+                                '¥${orderState.currentOrder!.total.toInt()}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,

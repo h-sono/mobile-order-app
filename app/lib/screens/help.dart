@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/app_scaffold.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -6,8 +7,10 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return AppScaffold(
-      title: 'Help & Guide',
+      title: l10n.helpGuide,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -25,16 +28,16 @@ class HelpScreen extends StatelessWidget {
                         Icon(Icons.waving_hand, color: Colors.orange[600]),
                         const SizedBox(width: 8),
                         Text(
-                          'Welcome to Mobile Order App!',
+                          l10n.welcomeToApp,
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'This guide will help you navigate through the app and place your orders easily.',
-                      style: TextStyle(fontSize: 16),
+                    Text(
+                      l10n.helpDescription,
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
@@ -44,7 +47,7 @@ class HelpScreen extends StatelessWidget {
 
             // Step-by-step guide
             Text(
-              'How to Place an Order',
+              l10n.howToPlaceOrder,
               style: Theme.of(
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -54,81 +57,85 @@ class HelpScreen extends StatelessWidget {
             // Step 1
             _buildStepCard(
               context,
+              l10n,
               stepNumber: 1,
-              title: 'Browse Menu',
-              description: 'Navigate to the menu to see all available items.',
+              title: l10n.browseMenu,
+              description: l10n.browseMenuDesc,
               icon: Icons.restaurant_menu,
               iconColor: Colors.blue,
               details: [
-                'Tap on "Menu" from the home screen',
-                'Browse through different categories (Pasta, Sides, Drinks)',
-                'View item details, prices, and descriptions',
-                'Check availability status',
+                l10n.tapMenuFromHome,
+                l10n.browseDifferentCategories,
+                l10n.viewItemDetails,
+                l10n.checkAvailability,
               ],
             ),
 
             // Step 2
             _buildStepCard(
               context,
+              l10n,
               stepNumber: 2,
-              title: 'Add Items to Cart',
-              description:
-                  'Select your favorite items and add them to your cart.',
+              title: l10n.addItemsToCart,
+              description: l10n.addItemsToCartDesc,
               icon: Icons.add_shopping_cart,
               iconColor: Colors.green,
               details: [
-                'Tap the "Add" button next to any menu item',
-                'See confirmation message when item is added',
-                'Watch the cart badge update with item count',
-                'Tap the cart icon to view your selections',
+                l10n.tapAddButton,
+                l10n.seeConfirmationMessage,
+                l10n.watchCartBadge,
+                l10n.tapCartIcon,
               ],
             ),
 
             // Step 3
             _buildStepCard(
               context,
+              l10n,
               stepNumber: 3,
-              title: 'Review Your Cart',
-              description: 'Check your selected items and adjust quantities.',
+              title: l10n.reviewYourCart,
+              description: l10n.reviewYourCartDesc,
               icon: Icons.shopping_cart,
               iconColor: Colors.orange,
               details: [
-                'View all selected items with prices',
-                'Use + and - buttons to adjust quantities',
-                'Remove items if needed',
-                'See total price calculation',
+                l10n.viewSelectedItems,
+                l10n.useAddRemoveButtons,
+                l10n.removeItemsIfNeeded,
+                l10n.seeTotalCalculation,
               ],
             ),
 
             // Step 4
             _buildStepCard(
               context,
+              l10n,
               stepNumber: 4,
-              title: 'Select Pickup Time',
-              description: 'Choose when you want to pick up your order.',
+              title: l10n.selectPickupTime,
+              description: l10n.selectPickupTimeDesc,
               icon: Icons.schedule,
               iconColor: Colors.purple,
               details: [
-                'Tap "Select Pickup Time" from cart',
-                'Choose your preferred date',
-                'Select from available time slots',
-                'See remaining capacity for each slot',
+                l10n.tapSelectPickupTime,
+                l10n.choosePreferredDate,
+                l10n.selectFromTimeSlots,
+                l10n.seeRemainingCapacity,
               ],
             ),
 
             // Step 5
             _buildStepCard(
               context,
+              l10n,
               stepNumber: 5,
-              title: 'Confirm Order',
-              description: 'Review everything and place your order.',
+              title: l10n.confirmOrder,
+              description: l10n.confirmOrderDesc,
               icon: Icons.check_circle,
               iconColor: Colors.teal,
               details: [
-                'Review your order summary',
-                'Confirm pickup time and total amount',
-                'Tap "Place Order" to submit',
-                'Receive order confirmation with QR code',
+                l10n.reviewOrderSummary,
+                l10n.confirmPickupAndTotal,
+                l10n.tapPlaceOrder,
+                l10n.receiveOrderConfirmation,
               ],
             ),
 
@@ -147,7 +154,7 @@ class HelpScreen extends StatelessWidget {
                         Icon(Icons.lightbulb, color: Colors.blue[700]),
                         const SizedBox(width: 8),
                         Text(
-                          'Helpful Tips',
+                          l10n.helpfulTips,
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -159,20 +166,20 @@ class HelpScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     _buildTip(
                       '💡',
-                      'Order during off-peak hours for faster preparation',
+                      l10n.orderOffPeakHours,
                     ),
                     _buildTip(
                       '🕒',
-                      'Arrive on time for your selected pickup slot',
+                      l10n.arriveOnTime,
                     ),
-                    _buildTip('📱', 'Keep your order QR code ready for pickup'),
+                    _buildTip('📱', l10n.keepQrCodeReady),
                     _buildTip(
                       '🔄',
-                      'Use the refresh button if menu items don\'t load',
+                      l10n.useRefreshButton,
                     ),
                     _buildTip(
                       '🏠',
-                      'Tap the home icon to return to main screen anytime',
+                      l10n.tapHomeIcon,
                     ),
                   ],
                 ),
@@ -194,7 +201,7 @@ class HelpScreen extends StatelessWidget {
                         Icon(Icons.support_agent, color: Colors.green[700]),
                         const SizedBox(width: 8),
                         Text(
-                          'Need More Help?',
+                          l10n.needMoreHelp,
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -204,22 +211,22 @@ class HelpScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'If you encounter any issues or have questions:',
-                      style: TextStyle(fontSize: 16),
+                    Text(
+                      l10n.needMoreHelpDesc,
+                      style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 8),
                     _buildContactInfo(
                       Icons.store,
-                      'Visit us at the restaurant counter',
+                      l10n.visitRestaurantCounter,
                     ),
                     _buildContactInfo(
                       Icons.phone,
-                      'Call us during business hours',
+                      l10n.callDuringBusinessHours,
                     ),
                     _buildContactInfo(
                       Icons.refresh,
-                      'Try refreshing the app if something doesn\'t work',
+                      l10n.tryRefreshingApp,
                     ),
                   ],
                 ),
@@ -234,7 +241,8 @@ class HelpScreen extends StatelessWidget {
   }
 
   Widget _buildStepCard(
-    BuildContext context, {
+    BuildContext context,
+    AppLocalizations l10n, {
     required int stepNumber,
     required String title,
     required String description,
