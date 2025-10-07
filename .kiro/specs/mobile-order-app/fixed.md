@@ -176,3 +176,21 @@ Tasks
 - 開発・本番環境に関係なくmenu_itemsテーブルのデータを必ず参照する。
 - ダミーデータは事故の元なので廃止。
 ---
+- 結果：APIを翻訳テーブル方式にする以外は成功。
+
+---
+メニュー画面に関して以下の修正を実施。
+
+Tasks
+- メニュー一覧に表示するデータはmenu_itemsテーブルのname、descriptionのデータに言語が依存してしまうため、menu_item_translationsテーブルを新設し、言語切り替えに対応したメニューデータを管理できるようにする。
+---
+- 結果：SQLSTATE[HY000]: General error: 1 no such function: FIELD (Connection: sqlite, SQL: select * from \"menu_item_translations\" where \"menu_item_translations\".\"menu_item_id\" in (1, 2, 3, 4, 5, 6, 7, 8) and \"locale\" in (ja, ja) order by FIELD(locale, 'ja', 'ja'))　発生。
+
+↓
+やり直し
+---
+メニュー画面（/menu）に関して以下の修正を実施。
+
+Tasks
+- QueryExceptionが発生（SQLSTATE[HY000]: General error: 1 no such function: FIELD (Connection: sqlite, SQL: select * from \"menu_item_translations\" where \"menu_item_translations\".\"menu_item_id\" in (1, 2, 3, 4, 5, 6, 7, 8) and \"locale\" in (ja, ja) order by FIELD(locale, 'ja', 'ja')) ）しているため修正する。
+---

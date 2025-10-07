@@ -520,4 +520,6 @@ CSRF保護: Laravel標準のCSRF対策
 T-14タスクは正常に完了しました。店舗スタッフが直感的に注文を管理し、ステータスを更新できる完全なWebダッシュボードが実装されています！
 ```
 
-## Phase5について：約 クレジット消費（合計約 クレジット）
+## Laravelのテーブル定義について
+- deleted_atは明記しなければ省略される。
+- API動作確認を`curl -v -H "X-Locale: ja" -H "Accept: application/json" http://localhost:8000/api/menu` や`start http://127.0.0.1:8000/api/menu` のように実行しようとするが毎回失敗する。curl等でで実行しようとして失敗するので、APIの動作確認方法は指定したほうがいい。Postmanなどがよさそう。
