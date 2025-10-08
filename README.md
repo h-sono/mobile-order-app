@@ -8,6 +8,7 @@
 cd mobile-order-app/api
 php artisan serve --host=127.0.0.1 --port=8000
 ```
+- ※ローカル環境のパス：C:\Users\sonob_cpfrkiu\mobile-app\mobile-order-app
 
 - http://127.0.0.1:8000/api/menu にアクセスして空リストがブランチに表示されればOK（初期）。
 
@@ -35,5 +36,5 @@ php artisan serve --host=127.0.0.1 --port=8000
 cd mobile-order-app/app
 flutter analyze
 # Chromeで確認する場合
-flutter run -d chrome --dart-define API_BASE_URL=http://localhost:8000
+flutter run -d chrome
 ```

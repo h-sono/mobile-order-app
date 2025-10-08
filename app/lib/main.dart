@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'router/app_router.dart';
 import 'providers/language_provider.dart';
 import 'l10n/app_localizations.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env file
+  await dotenv.load(fileName: ".env");
   // オーバーフロー警告を非表示にする
   FlutterError.onError = (FlutterErrorDetails details) {
     if (details.exception is FlutterError) {
@@ -16,7 +21,7 @@ void main() {
     }
     FlutterError.presentError(details);
   };
-  
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -26,7 +31,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(languageProvider);
-    
+
     return MaterialApp.router(
       title: 'Mobile Order App',
       debugShowCheckedModeBanner: false, // DEBUGバナーを非表示
@@ -41,14 +46,13 @@ class MyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ja'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ja')],
       routerConfig: appRouter,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: const TextScaler.linear(1.0)),
           child: child!,
         );
       },

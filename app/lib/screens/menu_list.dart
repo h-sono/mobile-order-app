@@ -21,7 +21,9 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
     // Load menu data when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentLocale = ref.read(languageProvider);
-      ref.read(menuProvider.notifier).loadMenu(locale: currentLocale.languageCode);
+      ref
+          .read(menuProvider.notifier)
+          .loadMenu(locale: currentLocale.languageCode);
     });
   }
 
@@ -83,7 +85,9 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
         IconButton(
           icon: const Icon(Icons.refresh),
           onPressed: () {
-            ref.read(menuProvider.notifier).loadMenu(locale: currentLocale.languageCode);
+            ref
+                .read(menuProvider.notifier)
+                .loadMenu(locale: currentLocale.languageCode);
           },
         ),
       ],
@@ -222,7 +226,9 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                         Row(
                           children: [
                             Text(
-                              item.getLocalizedCategory(currentLocale.languageCode),
+                              item.getLocalizedCategory(
+                                currentLocale.languageCode,
+                              ),
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 12,
@@ -265,7 +271,7 @@ class _MenuListScreenState extends ConsumerState<MenuListScreen> {
                                 content: Text(
                                   '${item.getLocalizedName(currentLocale.languageCode)} added to cart',
                                 ),
-                                duration: const Duration(seconds: 1),
+                                duration: const Duration(seconds: 3),
                               ),
                             );
                           },
